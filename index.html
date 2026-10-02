@@ -660,25 +660,25 @@
 
     /* SNOOZE BUTTON - ELECTRIC BLUE */
     .snooze-btn {
-      background: linear-gradient(180deg, #0a84ff 0%, #007aff 100%);
-      color: #fff;
-      box-shadow: 0 10px 24px rgba(10, 132, 255, 0.35);
+      background: linear-gradient(180deg, #0a84ff 0%, #007aff 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 24px rgba(10, 132, 255, 0.4) !important;
     }
 
     .snooze-btn:disabled {
-      background: #3a3a3c;
-      color: #7c7c80;
+      background: #3a3a3c !important;
+      color: #7c7c80 !important;
       cursor: not-allowed;
-      transform: none;
-      filter: none;
-      box-shadow: none;
+      transform: none !important;
+      filter: none !important;
+      box-shadow: none !important;
     }
 
     /* DISMISS BUTTON - VIBRANT GREEN */
     .dismiss-btn {
-      background: linear-gradient(180deg, #34c759 0%, #30d158 100%);
-      color: #fff;
-      box-shadow: 0 10px 24px rgba(48, 209, 88, 0.35);
+      background: linear-gradient(180deg, #34c759 0%, #30d158 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 24px rgba(48, 209, 88, 0.4) !important;
     }
 
     /* MATH CHALLENGE STYLING */
@@ -700,6 +700,16 @@
       margin: 4px 0;
     }
 
+    /* HIDE NUMBER INPUT SPINNERS */
+    .math-answer-input::-webkit-outer-spin-button,
+    .math-answer-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .math-answer-input[type=number] {
+      -moz-appearance: textfield;
+    }
+
     .math-answer-input {
       background: rgba(0, 0, 0, 0.4);
       border: 2px solid rgba(10, 132, 255, 0.5);
@@ -719,11 +729,30 @@
       box-shadow: 0 0 16px rgba(10, 132, 255, 0.4);
     }
 
-    .math-error-banner {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #ff453a;
-      animation: shake 0.3s ease-in-out;
+    /* BOLD RED PENALTY BANNER FOR WRONG ANSWERS */
+    .math-penalty-banner {
+      color: #ff3b30;
+      font-size: 0.92rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      background: rgba(255, 59, 48, 0.18);
+      border: 1.5px solid #ff3b30;
+      padding: 10px 14px;
+      border-radius: 12px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(255, 59, 48, 0.4);
+      display: none;
+      animation: penalty-pulse 0.4s infinite alternate ease-in-out;
+    }
+
+    .math-penalty-banner.active {
+      display: block;
+    }
+
+    @keyframes penalty-pulse {
+      0% { transform: scale(0.98); box-shadow: 0 0 12px rgba(255, 59, 48, 0.3); }
+      100% { transform: scale(1.02); box-shadow: 0 0 24px rgba(255, 59, 48, 0.7); }
     }
 
     @keyframes shake {
@@ -747,61 +776,22 @@
       color: #fff;
       background: rgba(255, 255, 255, 0.2);
     }
-      font-family: 'Bebas Neue', 'Inter', sans-serif;
-      letter-spacing: 2px;
-      color: #fff;
-      line-height: 1;
-    }
 
-    .alarm-snooze-info {
-      font-size: 0.88rem;
-      color: rgba(255, 255, 255, 0.65);
+    /* FULLSCREEN BLINDING WHITE FLASH OVERLAY */
+    .flash-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.04s ease;
     }
-
-    .alarm-btn-group {
-      display: flex;
-      gap: 14px;
-      width: 100%;
-      margin-top: 8px;
-    }
-
-    .alarm-btn {
-      flex: 1;
-      padding: 14px 18px;
-      border-radius: 12px;
-      border: none;
-      font-size: 1rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 0.15s ease, filter 0.2s ease;
-      letter-spacing: 1px;
-    }
-
-    .alarm-btn:hover {
-      transform: scale(1.04);
-      filter: brightness(1.15);
-    }
-
-    .alarm-btn:active {
-      transform: scale(0.96);
-    }
-
-    .snooze-btn {
-      background: #ff9f0a;
-      color: #000;
-    }
-
-    .snooze-btn:disabled {
-      background: #444;
-      color: #888;
-      cursor: not-allowed;
-      transform: none;
-      filter: none;
-    }
-
-    .dismiss-btn {
-      background: #ff453a;
-      color: #fff;
+    .flash-overlay.flashing {
+      opacity: 1;
     }
 
     /* Dynamic screen resizing breakpoint */
@@ -841,6 +831,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Fullscreen Blinding White Flash Overlay -->
+  <div class="flash-overlay" id="flashOverlay"></div>
 
   <div class="fliqlo-wrapper" id="wrapper">
 
@@ -1026,18 +1019,13 @@
 
     <!-- Math Challenge Verification View -->
     <div class="alarm-card" id="alarmMathView" style="display: none;">
-      <div class="math-badge-icon">
-        <svg viewBox="0 0 24 24" class="math-svg-large">
-          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-        </svg>
-      </div>
       <div class="math-subtitle" id="mathActionTitle">SOLVE TO CONFIRM</div>
       <div class="math-step-indicator" id="mathStepIndicator">Question 1 of 2</div>
       <div class="math-equation-display" id="mathEquation">18 + 91</div>
       <input type="number" id="mathAnswerInput" class="math-answer-input" placeholder="Your Answer" autocomplete="off">
-      <div class="math-error-banner" id="mathErrorBanner" style="display: none;"></div>
+      <div class="math-penalty-banner" id="mathPenaltyBanner"></div>
       <div class="alarm-btn-group">
-        <button class="alarm-btn math-submit-btn" id="mathSubmitBtn">SUBMIT ANSWER</button>
+        <button class="alarm-btn math-submit-btn" id="mathSubmitBtn">SUBMIT</button>
         <button class="alarm-btn math-cancel-btn" id="mathCancelBtn">CANCEL</button>
       </div>
     </div>
@@ -1285,6 +1273,7 @@
         testSoundIcon: document.getElementById('testSoundIcon'),
         testSoundBtnText: document.getElementById('testSoundBtnText'),
 
+        flashOverlay: document.getElementById('flashOverlay'),
         alarmOverlay: document.getElementById('alarmOverlay'),
         alarmMainView: document.getElementById('alarmMainView'),
         alarmMathView: document.getElementById('alarmMathView'),
@@ -1296,7 +1285,7 @@
         mathStepIndicator: document.getElementById('mathStepIndicator'),
         mathEquation: document.getElementById('mathEquation'),
         mathAnswerInput: document.getElementById('mathAnswerInput'),
-        mathErrorBanner: document.getElementById('mathErrorBanner'),
+        mathPenaltyBanner: document.getElementById('mathPenaltyBanner'),
         mathSubmitBtn: document.getElementById('mathSubmitBtn'),
         mathCancelBtn: document.getElementById('mathCancelBtn')
       };
@@ -1435,6 +1424,7 @@
       const mathChallengeState = {
         activeAction: null,
         currentStep: 1,
+        totalQuestions: 2,
         targetAnswer: 0
       };
 
@@ -1458,10 +1448,28 @@
         }
       }
 
+      function flashScreenWhite() {
+        const overlay = elements.flashOverlay;
+        if (!overlay) return;
+        let count = 0;
+        const interval = setInterval(() => {
+          overlay.classList.toggle('flashing');
+          count++;
+          if (count >= 6) { // 3 rapid blinding flashes
+            clearInterval(interval);
+            overlay.classList.remove('flashing');
+          }
+        }, 50);
+      }
+
       function startMathChallenge(action) {
         mathChallengeState.activeAction = action;
         mathChallengeState.currentStep = 1;
+        mathChallengeState.totalQuestions = 2;
         elements.mathActionTitle.textContent = action === 'snooze' ? 'Math Challenge to Snooze' : 'Math Challenge to Dismiss';
+        if (elements.mathPenaltyBanner) {
+          elements.mathPenaltyBanner.classList.remove('active');
+        }
         presentMathQuestion();
         elements.alarmMainView.style.display = 'none';
         elements.alarmMathView.style.display = 'block';
@@ -1471,10 +1479,9 @@
       function presentMathQuestion() {
         const q = generateMathQuestion();
         mathChallengeState.targetAnswer = q.answer;
-        elements.mathStepIndicator.textContent = `Question ${mathChallengeState.currentStep} of 2`;
+        elements.mathStepIndicator.textContent = `Question ${mathChallengeState.currentStep} of ${mathChallengeState.totalQuestions}`;
         elements.mathEquation.textContent = `${q.equation} = ?`;
         elements.mathAnswerInput.value = '';
-        elements.mathErrorBanner.classList.remove('active');
         elements.mathAnswerInput.focus();
       }
 
@@ -1482,17 +1489,33 @@
         const val = elements.mathAnswerInput.value.trim();
         const userAns = parseInt(val, 10);
         if (val === '' || isNaN(userAns) || userAns !== mathChallengeState.targetAnswer) {
-          elements.mathErrorBanner.classList.add('active');
+          // WRONG ANSWER PENALTY (+2 questions!)
+          mathChallengeState.totalQuestions += 2;
+
+          if (elements.mathPenaltyBanner) {
+            elements.mathPenaltyBanner.textContent = `INCORRECT! PENALTY: +2 QUESTIONS ADDED! (${mathChallengeState.totalQuestions} TOTAL)`;
+            elements.mathPenaltyBanner.classList.add('active');
+          }
+
+          // Blinding white screen strobe flash
+          flashScreenWhite();
+
           elements.alarmMathView.classList.remove('shake');
           void elements.alarmMathView.offsetWidth;
           elements.alarmMathView.classList.add('shake');
+
           setTimeout(() => {
             presentMathQuestion();
-          }, 600);
+          }, 350);
           return;
         }
 
-        if (mathChallengeState.currentStep < 2) {
+        // CORRECT ANSWER
+        if (elements.mathPenaltyBanner) {
+          elements.mathPenaltyBanner.classList.remove('active');
+        }
+
+        if (mathChallengeState.currentStep < mathChallengeState.totalQuestions) {
           mathChallengeState.currentStep++;
           presentMathQuestion();
         } else {
@@ -1509,9 +1532,12 @@
       function cancelMathChallenge() {
         mathChallengeState.activeAction = null;
         mathChallengeState.currentStep = 1;
+        mathChallengeState.totalQuestions = 2;
         elements.alarmMathView.style.display = 'none';
         elements.alarmMainView.style.display = 'block';
-        elements.mathErrorBanner.classList.remove('active');
+        if (elements.mathPenaltyBanner) {
+          elements.mathPenaltyBanner.classList.remove('active');
+        }
       }
 
       function triggerAlarm(now) {
@@ -1536,7 +1562,7 @@
           const snoozesLeft = alarmState.maxSnoozes === 999 ? '∞' : (alarmState.maxSnoozes - alarmState.snoozesUsed);
           elements.alarmSnoozeInfo.textContent = `Snooze duration: ${alarmState.snoozeDuration} min (${snoozesLeft} remaining)`;
           elements.snoozeBtn.disabled = false;
-          elements.snoozeBtn.textContent = `SNOOZE (${alarmState.snoozeDuration}M)`;
+          elements.snoozeBtn.textContent = 'SNOOZE';
         }
 
         elements.alarmOverlay.classList.add('active');
