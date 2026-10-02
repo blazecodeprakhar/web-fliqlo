@@ -1,0 +1,5 @@
+# Ignore binary screensaver and webview cache
+Fliqlo.scr
+Fliqlo.scr.WebView2/
+.DS_Store
+Thumbs.db

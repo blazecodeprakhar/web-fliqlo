@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fliqlo Flip Clock</title>
+  <meta name="description" content="Authentic Fliqlo screensaver flip clock in pure HTML, CSS, and JS powered by local PC time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@700;800;900&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0d0d0e;
+      --card-bg: #1c1c1e;
+      --card-bg-gradient: linear-gradient(180deg, #252528 0%, #171719 100%);
+      --card-text-color: #f6f6f6;
+      --card-divider: #09090a;
+      --card-shadow: 0 35px 70px rgba(0, 0, 0, 0.8), 0 12px 24px rgba(0, 0, 0, 0.6);
+      --card-radius: 24px;
+      
+      --clock-scale: 1;
+      --card-width: 310px;
+      --card-height: 370px;
+      --font-size: 270px;
+      --gap: 32px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Outer centering wrapper */
+    .fliqlo-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* Flip Clock Container */
+    .fliqlo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--gap) * var(--clock-scale));
+      transform: scale(var(--clock-scale));
+      transform-origin: center center;
+      transition: transform 0.2s ease-out;
+    }
+
+    /* Flip Card Component */
+    .flip-card {
+      position: relative;
+      width: var(--card-width);
+      height: var(--card-height);
+      background: var(--card-bg);
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      perspective: 1200px;
+    }
+
+    /* Side Hinge Cutouts (Notches on left & right edge) */
+    .flip-card::before,
+    .flip-card::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 10px;
+      height: 18px;
+      background-color: var(--bg-color);
+      z-index: 20;
+      transform: translateY(-50%);
+    }
+
+    .flip-card::before {
+      left: 0;
+      border-top-right-radius: 9px;
+      border-bottom-right-radius: 9px;
+    }
+
+    .flip-card::after {
+      right: 0;
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+    }
+
+    /* Center horizontal divider line */
+    .card-divider {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: var(--card-divider);
+      z-index: 15;
+      transform: translateY(-50%);
+      box-shadow: 0 1px 1px rgba(255, 255, 255, 0.05);
+    }
+
+    /* Card Half Base */
+    .card-half {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      overflow: hidden;
+      background: var(--card-bg-gradient);
+      color: var(--card-text-color);
+      display: flex;
+      justify-content: center;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .card-half span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: var(--card-height);
+      line-height: var(--card-height);
+      text-align: center;
+      font-size: var(--font-size);
+      font-weight: 800;
+      letter-spacing: -2px;
+      font-family: 'Bebas Neue', 'Outfit', 'Inter', -apple-system, sans-serif;
+    }
+
+    /* Top Half */
+    .card-half.top {
+      top: 0;
+      border-top-left-radius: var(--card-radius);
+      border-top-right-radius: var(--card-radius);
+      transform-origin: 50% 100%;
+    }
+    .card-half.top span {
+      top: 0;
+    }
+
+    /* Bottom Half */
+    .card-half.bottom {
+      bottom: 0;
+      border-bottom-left-radius: var(--card-radius);
+      border-bottom-right-radius: var(--card-radius);
+      transform-origin: 50% 0%;
+    }
+    .card-half.bottom span {
+      bottom: 0;
+    }
+
+    /* Flip animation leaves */
+    .leaf-top {
+      z-index: 4;
+    }
+    .leaf-bottom {
+      z-index: 3;
+      transform: rotateX(90deg);
+    }
+
+    /* Animation Keyframes */
+    .flip-card.flipping .leaf-top {
+      animation: flip-top 0.26s ease-in forwards;
+    }
+
+    .flip-card.flipping .leaf-bottom {
+      animation: flip-bottom 0.26s ease-out 0.26s forwards;
+    }
+
+    @keyframes flip-top {
+      0% {
+        transform: rotateX(0deg);
+        filter: brightness(1);
+      }
+      100% {
+        transform: rotateX(-90deg);
+        filter: brightness(0.65);
+      }
+    }
+
+    @keyframes flip-bottom {
+      0% {
+        transform: rotateX(90deg);
+        filter: brightness(0.65);
+      }
+      100% {
+        transform: rotateX(0deg);
+        filter: brightness(1);
+      }
+    }
+
+    /* AM / PM Badge inside Hour Card */
+    .ampm-label {
+      position: absolute;
+      bottom: 22px;
+      left: 24px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.65);
+      z-index: 18;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Optional Seconds Card Unit */
+    .seconds-card-unit {
+      display: none;
+    }
+    .seconds-card-unit.active {
+      display: block;
+    }
+
+    /* TOP-LEFT CONTROL CONTAINER */
+    .top-left-area {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      z-index: 200;
+    }
+
+    /* Invisible click trigger zone in Top-Left Corner */
+    .click-hotspot {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 160px;
+      height: 120px;
+      z-index: 190;
+      cursor: pointer;
+    }
+
+    /* Minimalist Floating Controls - Initially Hidden */
+    .controls-panel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      position: relative;
+      z-index: 200;
+    }
+
+    .controls-panel.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .control-btn {
+      background: rgba(40, 40, 45, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .control-btn:hover {
+      background: rgba(60, 60, 68, 0.95);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .control-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Settings Menu Popup - Below Top Left Controls */
+    .settings-popover {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      background: #1c1c1e;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 20px;
+      width: 260px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 205;
+      color: #fff;
+    }
+
+    .settings-popover.open {
+      display: flex;
+    }
+
+    .popover-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+    }
+
+    .popover-row label {
+      font-weight: 500;
+    }
+
+    .popover-row input[type="range"] {
+      width: 100px;
+      accent-color: #fff;
+    }
+
+    .popover-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #ffffff;
+    }
+
+    /* Dynamic screen resizing breakpoint */
+    @media (max-width: 768px) {
+      :root {
+        --card-width: 160px;
+        --card-height: 200px;
+        --font-size: 145px;
+        --gap: 16px;
+        --card-radius: 14px;
+      }
+      .ampm-label {
+        bottom: 12px;
+        left: 14px;
+        font-size: 0.85rem;
+      }
+      .top-left-area {
+        top: 16px;
+        left: 16px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      :root {
+        --card-width: 130px;
+        --card-height: 160px;
+        --font-size: 115px;
+        --gap: 10px;
+        --card-radius: 10px;
+      }
+      .ampm-label {
+        bottom: 8px;
+        left: 10px;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="fliqlo-wrapper" id="wrapper">
+
+    <!-- Invisible Hotspot to register 5 clicks in Top Left -->
+    <div class="click-hotspot" id="clickHotspot"></div>
+
+    <!-- Top Left Controls Container -->
+    <div class="top-left-area" id="topLeftArea">
+      
+      <!-- Controls Panel (Invisible by default, revealed after 5 clicks) -->
+      <div class="controls-panel" id="controlsPanel">
+        <button class="control-btn" id="formatBtn">12H</button>
+        <button class="control-btn" id="settingsToggleBtn">
+          <svg viewBox="0 0 24 24">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+        </button>
+        <button class="control-btn" id="fullscreenBtn" title="Fullscreen">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Settings Popover -->
+      <div class="settings-popover" id="settingsPopover">
+        <div class="popover-row">
+          <label for="formatCheck">24-Hour Format</label>
+          <input type="checkbox" id="formatCheck">
+        </div>
+        <div class="popover-row">
+          <label for="showAmPmCheck">Show AM/PM</label>
+          <input type="checkbox" id="showAmPmCheck" checked>
+        </div>
+        <div class="popover-row">
+          <label for="showSecCheck">Show Seconds</label>
+          <input type="checkbox" id="showSecCheck">
+        </div>
+        <div class="popover-row">
+          <label for="scaleSlider">Scale</label>
+          <input type="range" id="scaleSlider" min="0.5" max="1.5" step="0.05" value="1">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="fliqlo-container" id="clockContainer">
+      
+      <!-- Hours Card (Left) -->
+      <div class="flip-card" id="hoursCard">
+        <div class="card-divider"></div>
+        <div class="card-half top static-top"><span id="hoursTop">12</span></div>
+        <div class="card-half bottom static-bottom"><span id="hoursBottom">12</span></div>
+        <div class="card-half top leaf-top"><span id="hoursLeafTop">12</span></div>
+        <div class="card-half bottom leaf-bottom"><span id="hoursLeafBottom">12</span></div>
+        <div class="ampm-label" id="ampmLabel">PM</div>
+      </div>
+
+      <!-- Minutes Card (Right) -->
+      <div class="flip-card" id="minutesCard">
+        <div class="card-divider"></div>
+        <div class="card-half top static-top"><span id="minutesTop">00</span></div>
+        <div class="card-half bottom static-bottom"><span id="minutesBottom">00</span></div>
+        <div class="card-half top leaf-top"><span id="minutesLeafTop">00</span></div>
+        <div class="card-half bottom leaf-bottom"><span id="minutesLeafBottom">00</span></div>
+      </div>
+
+      <!-- Optional Seconds Card -->
+      <div class="flip-card seconds-card-unit" id="secondsCardUnit">
+        <div class="card-divider"></div>
+        <div class="card-half top static-top"><span id="secondsTop">00</span></div>
+        <div class="card-half bottom static-bottom"><span id="secondsBottom">00</span></div>
+        <div class="card-half top leaf-top"><span id="secondsLeafTop">00</span></div>
+        <div class="card-half bottom leaf-bottom"><span id="secondsLeafBottom">00</span></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const state = {
+        is24Hour: false,
+        showAmPm: true,
+        showSeconds: false,
+        scale: 1,
+        hours: null,
+        minutes: null,
+        seconds: null,
+        ampm: null
+      };
+
+      const elements = {
+        wrapper: document.getElementById('wrapper'),
+        clockContainer: document.getElementById('clockContainer'),
+        
+        hoursCard: document.getElementById('hoursCard'),
+        hoursTop: document.getElementById('hoursTop'),
+        hoursBottom: document.getElementById('hoursBottom'),
+        hoursLeafTop: document.getElementById('hoursLeafTop'),
+        hoursLeafBottom: document.getElementById('hoursLeafBottom'),
+        ampmLabel: document.getElementById('ampmLabel'),
+
+        minutesCard: document.getElementById('minutesCard'),
+        minutesTop: document.getElementById('minutesTop'),
+        minutesBottom: document.getElementById('minutesBottom'),
+        minutesLeafTop: document.getElementById('minutesLeafTop'),
+        minutesLeafBottom: document.getElementById('minutesLeafBottom'),
+
+        secondsCardUnit: document.getElementById('secondsCardUnit'),
+        secondsTop: document.getElementById('secondsTop'),
+        secondsBottom: document.getElementById('secondsBottom'),
+        secondsLeafTop: document.getElementById('secondsLeafTop'),
+        secondsLeafBottom: document.getElementById('secondsLeafBottom'),
+
+        clickHotspot: document.getElementById('clickHotspot'),
+        topLeftArea: document.getElementById('topLeftArea'),
+        controlsPanel: document.getElementById('controlsPanel'),
+        formatBtn: document.getElementById('formatBtn'),
+        settingsToggleBtn: document.getElementById('settingsToggleBtn'),
+        fullscreenBtn: document.getElementById('fullscreenBtn'),
+
+        settingsPopover: document.getElementById('settingsPopover'),
+        formatCheck: document.getElementById('formatCheck'),
+        showAmPmCheck: document.getElementById('showAmPmCheck'),
+        showSecCheck: document.getElementById('showSecCheck'),
+        scaleSlider: document.getElementById('scaleSlider')
+      };
+
+      function updateCard(cardEl, topEl, bottomEl, leafTopEl, leafBottomEl, newValue) {
+        const currentVal = bottomEl.textContent;
+        if (currentVal === newValue) return;
+
+        cardEl.classList.remove('flipping');
+        void cardEl.offsetWidth; // Force reflow
+
+        topEl.textContent = newValue;
+        bottomEl.textContent = currentVal;
+        leafTopEl.textContent = currentVal;
+        leafBottomEl.textContent = newValue;
+
+        cardEl.classList.add('flipping');
+
+        setTimeout(() => {
+          bottomEl.textContent = newValue;
+        }, 500);
+      }
+
+      function tick() {
+        const now = new Date();
+        let h = now.getHours();
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        let ampmStr = '';
+
+        if (!state.is24Hour) {
+          ampmStr = h >= 12 ? 'PM' : 'AM';
+          h = h % 12;
+          if (h === 0) h = 12;
+        }
+
+        const hStr = String(h).padStart(2, '0');
+
+        if (state.hours === null) {
+          // First load initialization
+          elements.hoursTop.textContent = hStr;
+          elements.hoursBottom.textContent = hStr;
+          elements.hoursLeafTop.textContent = hStr;
+          elements.hoursLeafBottom.textContent = hStr;
+
+          elements.minutesTop.textContent = m;
+          elements.minutesBottom.textContent = m;
+          elements.minutesLeafTop.textContent = m;
+          elements.minutesLeafBottom.textContent = m;
+
+          elements.secondsTop.textContent = s;
+          elements.secondsBottom.textContent = s;
+          elements.secondsLeafTop.textContent = s;
+          elements.secondsLeafBottom.textContent = s;
+        } else {
+          if (state.hours !== hStr) {
+            updateCard(
+              elements.hoursCard,
+              elements.hoursTop,
+              elements.hoursBottom,
+              elements.hoursLeafTop,
+              elements.hoursLeafBottom,
+              hStr
+            );
+          }
+          if (state.minutes !== m) {
+            updateCard(
+              elements.minutesCard,
+              elements.minutesTop,
+              elements.minutesBottom,
+              elements.minutesLeafTop,
+              elements.minutesLeafBottom,
+              m
+            );
+          }
+          if (state.seconds !== s && state.showSeconds) {
+            updateCard(
+              elements.secondsCardUnit,
+              elements.secondsTop,
+              elements.secondsBottom,
+              elements.secondsLeafTop,
+              elements.secondsLeafBottom,
+              s
+            );
+          }
+        }
+
+        state.hours = hStr;
+        state.minutes = m;
+        state.seconds = s;
+        state.ampm = ampmStr;
+
+        // AM/PM badge display
+        if (state.is24Hour || !state.showAmPm) {
+          elements.ampmLabel.style.display = 'none';
+        } else {
+          elements.ampmLabel.style.display = 'block';
+          elements.ampmLabel.textContent = ampmStr;
+        }
+      }
+
+      function startClock() {
+        tick();
+        const now = new Date();
+        const delay = 1000 - now.getMilliseconds();
+        setTimeout(() => {
+          tick();
+          setInterval(tick, 1000);
+        }, delay);
+      }
+
+      // --- 5-CLICK UNLOCK & HOVER AWAY 5-SECOND AUTO-HIDE LOGIC ---
+      let clickCounter = 0;
+      let clickResetTimer = null;
+      let hoverAwayTimer = null;
+
+      function registerTopLeftClick() {
+        clickCounter++;
+        clearTimeout(clickResetTimer);
+
+        // Reset multi-click counter if inactive for > 2 seconds
+        clickResetTimer = setTimeout(() => {
+          clickCounter = 0;
+        }, 2000);
+
+        if (clickCounter >= 5) {
+          showControlsPanel();
+          clickCounter = 0;
+        }
+      }
+
+      function showControlsPanel() {
+        clearTimeout(hoverAwayTimer);
+        elements.controlsPanel.classList.add('visible');
+      }
+
+      function hideControlsPanel() {
+        // Do not hide if settings popover is currently open
+        if (!elements.settingsPopover.classList.contains('open')) {
+          elements.controlsPanel.classList.remove('visible');
+        }
+      }
+
+      function startHoverAwayTimer() {
+        clearTimeout(hoverAwayTimer);
+        // Start 5-second countdown to hide controls when mouse leaves
+        hoverAwayTimer = setTimeout(() => {
+          hideControlsPanel();
+        }, 5000);
+      }
+
+      function cancelHoverAwayTimer() {
+        clearTimeout(hoverAwayTimer);
+      }
+
+      // Hotspot click listener in top-left
+      elements.clickHotspot.addEventListener('click', registerTopLeftClick);
+      elements.topLeftArea.addEventListener('click', (e) => {
+        if (!elements.controlsPanel.classList.contains('visible')) {
+          registerTopLeftClick();
+        }
+      });
+
+      // Hover away handling on top-left area
+      elements.topLeftArea.addEventListener('mouseleave', startHoverAwayTimer);
+      elements.topLeftArea.addEventListener('mouseenter', cancelHoverAwayTimer);
+
+      // Event Listeners for Settings & Controls
+      elements.formatBtn.addEventListener('click', () => {
+        state.is24Hour = !state.is24Hour;
+        elements.formatCheck.checked = state.is24Hour;
+        elements.formatBtn.textContent = state.is24Hour ? '24H' : '12H';
+        state.hours = null;
+        tick();
+      });
+
+      elements.formatCheck.addEventListener('change', (e) => {
+        state.is24Hour = e.target.checked;
+        elements.formatBtn.textContent = state.is24Hour ? '24H' : '12H';
+        state.hours = null;
+        tick();
+      });
+
+      elements.showAmPmCheck.addEventListener('change', (e) => {
+        state.showAmPm = e.target.checked;
+        tick();
+      });
+
+      elements.showSecCheck.addEventListener('change', (e) => {
+        state.showSeconds = e.target.checked;
+        if (state.showSeconds) {
+          elements.secondsCardUnit.classList.add('active');
+        } else {
+          elements.secondsCardUnit.classList.remove('active');
+        }
+        state.seconds = null;
+        tick();
+      });
+
+      elements.scaleSlider.addEventListener('input', (e) => {
+        state.scale = e.target.value;
+        document.documentElement.style.setProperty('--clock-scale', state.scale);
+      });
+
+      elements.settingsToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        elements.settingsPopover.classList.toggle('open');
+      });
+
+      window.addEventListener('click', (e) => {
+        if (!elements.settingsPopover.contains(e.target) && e.target !== elements.settingsToggleBtn) {
+          elements.settingsPopover.classList.remove('open');
+        }
+      });
+
+      elements.fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      });
+
+      // Keyboard Hotkeys
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'f' || e.key === 'F') {
+          elements.fullscreenBtn.click();
+        } else if (e.key === 't' || e.key === 'T') {
+          elements.formatBtn.click();
+        }
+      });
+
+      startClock();
+
+    })();
+  </script>
+</body>
+</html>
