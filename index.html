@@ -783,7 +783,6 @@
       
       <!-- Controls Panel (Invisible by default, revealed after 5 clicks) -->
       <div class="controls-panel" id="controlsPanel">
-        <button class="control-btn" id="formatBtn">12H</button>
         <button class="control-btn" id="alarmToggleBtn" title="Alarm Settings">
           <svg viewBox="0 0 24 24">
             <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
@@ -1170,7 +1169,6 @@
         clickHotspot: document.getElementById('clickHotspot'),
         topLeftArea: document.getElementById('topLeftArea'),
         controlsPanel: document.getElementById('controlsPanel'),
-        formatBtn: document.getElementById('formatBtn'),
         alarmToggleBtn: document.getElementById('alarmToggleBtn'),
         alarmBtnBadge: document.getElementById('alarmBtnBadge'),
         settingsToggleBtn: document.getElementById('settingsToggleBtn'),
@@ -1527,15 +1525,6 @@
       elements.topLeftArea.addEventListener('mouseenter', cancelHoverAwayTimer);
 
       // Event Listeners for Settings & Controls
-      elements.formatBtn.addEventListener('click', () => {
-        state.is24Hour = !state.is24Hour;
-        elements.formatCheck.checked = state.is24Hour;
-        elements.formatBtn.textContent = state.is24Hour ? '24H' : '12H';
-        state.hours = null;
-        updateAlarmUI();
-        tick();
-      });
-
       elements.alarmToggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         ringtoneManager.initContext();
@@ -1544,7 +1533,6 @@
 
       elements.formatCheck.addEventListener('change', (e) => {
         state.is24Hour = e.target.checked;
-        elements.formatBtn.textContent = state.is24Hour ? '24H' : '12H';
         state.hours = null;
         updateAlarmUI();
         tick();
@@ -1689,7 +1677,8 @@
         if (e.key === 'f' || e.key === 'F') {
           elements.fullscreenBtn.click();
         } else if (e.key === 't' || e.key === 'T') {
-          elements.formatBtn.click();
+          elements.formatCheck.checked = !elements.formatCheck.checked;
+          elements.formatCheck.dispatchEvent(new Event('change'));
         }
       });
 
