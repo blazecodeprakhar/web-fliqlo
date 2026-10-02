@@ -298,19 +298,29 @@
       position: absolute;
       top: 50px;
       left: 0;
-      background: #1c1c1e;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 14px;
-      padding: 18px 20px;
-      width: 290px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      background: rgba(26, 26, 28, 0.95);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.2);
       display: none;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       z-index: 205;
       color: #fff;
       max-height: 85vh;
       overflow-y: auto;
+    }
+
+    .settings-popover::-webkit-scrollbar {
+      width: 4px;
+    }
+    .settings-popover::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
     }
 
     .settings-popover.open {
@@ -326,18 +336,58 @@
 
     .popover-row label {
       font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
     }
 
     .popover-row input[type="range"] {
       width: 100px;
-      accent-color: #fff;
+      accent-color: #ffffff;
+      cursor: pointer;
     }
 
-    .popover-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
+    /* Modern Custom iOS-Style Toggle Switch */
+    .switch-container {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .switch-container input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-slider {
+      position: absolute;
       cursor: pointer;
-      accent-color: #ffffff;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 22px;
+      transition: background-color 0.25s ease;
+    }
+
+    .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.25s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    input:checked + .switch-slider {
+      background-color: #30d158;
+    }
+
+    input:checked + .switch-slider:before {
+      transform: translateX(18px);
     }
 
     .popover-divider {
@@ -347,39 +397,48 @@
     }
 
     .popover-section-title {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
       color: rgba(255, 255, 255, 0.5);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+    }
+
+    .section-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
     }
 
     .time-input, .popover-select {
-      background: #2a2a2e;
+      background: rgba(45, 45, 50, 0.85);
       color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 6px;
-      padding: 4px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      padding: 5px 10px;
       font-size: 0.85rem;
       font-family: inherit;
       outline: none;
+      transition: border-color 0.2s, background 0.2s;
     }
 
     .time-input:focus, .popover-select:focus {
-      border-color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(60, 60, 68, 0.95);
     }
 
     .file-label-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 5px 12px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 0.78rem;
-      transition: background 0.2s;
+      font-weight: 600;
+      transition: all 0.2s;
       white-space: nowrap;
     }
 
@@ -388,8 +447,8 @@
     }
 
     .file-name-span {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.65);
       max-width: 120px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -405,23 +464,33 @@
 
     .popover-action-btn {
       background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       color: #fff;
-      padding: 5px 12px;
-      border-radius: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .popover-action-btn:hover {
       background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-svg-icon {
+      width: 13px;
+      height: 13px;
+      fill: currentColor;
     }
 
     .alarm-badge {
       font-size: 0.68rem;
-      padding: 2px 6px;
+      padding: 2px 7px;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.15);
       color: #aaa;
@@ -434,14 +503,31 @@
       color: #000;
     }
 
-    .alarm-status-banner {
-      font-size: 0.76rem;
-      color: #30d158;
+    .status-banner-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
       font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
     }
 
-    .alarm-status-banner.off {
+    .status-banner-container.off {
       color: rgba(255, 255, 255, 0.4);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #8e8e93;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .status-dot.active {
+      background: #30d158;
+      box-shadow: 0 0 8px rgba(48, 209, 88, 0.8);
     }
 
     /* FULLSCREEN ALARM RINGING OVERLAY */
@@ -451,8 +537,9 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(10, 10, 12, 0.93);
-      backdrop-filter: blur(25px);
+      background: rgba(8, 8, 10, 0.94);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
       z-index: 1000;
       display: none;
       justify-content: center;
@@ -466,21 +553,21 @@
 
     @keyframes alarm-pulse-bg {
       0% {
-        box-shadow: inset 0 0 60px rgba(255, 69, 58, 0.2);
-        background: rgba(15, 10, 12, 0.94);
+        box-shadow: inset 0 0 80px rgba(255, 69, 58, 0.2);
+        background: rgba(12, 8, 10, 0.94);
       }
       100% {
-        box-shadow: inset 0 0 180px rgba(255, 69, 58, 0.55);
-        background: rgba(35, 12, 16, 0.98);
+        box-shadow: inset 0 0 200px rgba(255, 69, 58, 0.5);
+        background: rgba(30, 10, 14, 0.98);
       }
     }
 
     .alarm-card {
-      background: #1c1c1e;
+      background: rgba(28, 28, 30, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9), 0 0 50px rgba(255, 69, 58, 0.35);
-      border-radius: 24px;
-      padding: 40px 44px;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), 0 0 60px rgba(255, 69, 58, 0.3);
+      border-radius: 28px;
+      padding: 44px 48px;
       text-align: center;
       color: #fff;
       display: flex;
@@ -493,22 +580,36 @@
     }
 
     @keyframes alarm-bounce {
-      0% { transform: scale(0.7); opacity: 0; }
+      0% { transform: scale(0.75); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
 
-    .alarm-icon-animated {
-      font-size: 3.8rem;
-      animation: bell-ring 0.35s infinite alternate ease-in-out;
+    .alarm-badge-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(255, 69, 58, 0.12);
+      border: 1.5px solid rgba(255, 69, 58, 0.35);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 20px rgba(255, 69, 58, 0.2);
+      animation: bell-bounce 0.4s infinite alternate ease-in-out;
     }
 
-    @keyframes bell-ring {
-      0% { transform: rotate(-18deg); }
-      100% { transform: rotate(18deg); }
+    .bell-svg-large {
+      width: 36px;
+      height: 36px;
+      fill: #ff453a;
     }
 
-    .alarm-title {
-      font-size: 1.1rem;
+    @keyframes bell-bounce {
+      0% { transform: rotate(-16deg) scale(0.95); }
+      100% { transform: rotate(16deg) scale(1.05); }
+    }
+
+    .alarm-subtitle {
+      font-size: 1rem;
       font-weight: 800;
       letter-spacing: 3px;
       color: #ff453a;
@@ -516,8 +617,67 @@
     }
 
     .alarm-time-display {
-      font-size: 3.5rem;
+      font-size: 3.8rem;
       font-weight: 900;
+      font-family: 'Bebas Neue', 'Inter', sans-serif;
+      letter-spacing: 2px;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .alarm-snooze-info {
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .alarm-btn-group {
+      display: flex;
+      gap: 14px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .alarm-btn {
+      flex: 1;
+      padding: 15px 20px;
+      border-radius: 14px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      letter-spacing: 1px;
+    }
+
+    .alarm-btn:hover {
+      transform: scale(1.03);
+      filter: brightness(1.15);
+    }
+
+    .alarm-btn:active {
+      transform: scale(0.97);
+    }
+
+    .snooze-btn {
+      background: linear-gradient(180deg, #ffb340 0%, #ff9f0a 100%);
+      color: #000;
+      box-shadow: 0 10px 24px rgba(255, 159, 10, 0.3);
+    }
+
+    .snooze-btn:disabled {
+      background: #3a3a3c;
+      color: #7c7c80;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+      box-shadow: none;
+    }
+
+    .dismiss-btn {
+      background: linear-gradient(180deg, #ff5b52 0%, #ff453a 100%);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(255, 69, 58, 0.35);
+    }
       font-family: 'Bebas Neue', 'Inter', sans-serif;
       letter-spacing: 2px;
       color: #fff;
@@ -646,15 +806,24 @@
       <div class="settings-popover" id="settingsPopover">
         <div class="popover-row">
           <label for="formatCheck">24-Hour Format</label>
-          <input type="checkbox" id="formatCheck">
+          <label class="switch-container">
+            <input type="checkbox" id="formatCheck">
+            <span class="switch-slider"></span>
+          </label>
         </div>
         <div class="popover-row">
           <label for="showAmPmCheck">Show AM/PM</label>
-          <input type="checkbox" id="showAmPmCheck" checked>
+          <label class="switch-container">
+            <input type="checkbox" id="showAmPmCheck" checked>
+            <span class="switch-slider"></span>
+          </label>
         </div>
         <div class="popover-row">
           <label for="showSecCheck">Show Seconds</label>
-          <input type="checkbox" id="showSecCheck">
+          <label class="switch-container">
+            <input type="checkbox" id="showSecCheck">
+            <span class="switch-slider"></span>
+          </label>
         </div>
         <div class="popover-row">
           <label for="scaleSlider">Scale</label>
@@ -663,11 +832,17 @@
 
         <!-- Alarm Settings Section -->
         <div class="popover-divider"></div>
-        <div class="popover-section-title">⏰ Alarm Settings</div>
+        <div class="popover-section-title">
+          <svg class="section-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span>ALARM SETTINGS</span>
+        </div>
 
         <div class="popover-row">
           <label for="alarmEnabledCheck">Enable Alarm</label>
-          <input type="checkbox" id="alarmEnabledCheck">
+          <label class="switch-container">
+            <input type="checkbox" id="alarmEnabledCheck">
+            <span class="switch-slider"></span>
+          </label>
         </div>
 
         <div class="popover-row">
@@ -715,8 +890,14 @@
         </div>
 
         <div class="popover-actions">
-          <span id="alarmStatusBanner" class="alarm-status-banner off">Alarm Disabled</span>
-          <button class="popover-action-btn" id="testSoundBtn">▶ Test Sound</button>
+          <div class="status-banner-container off" id="statusBannerContainer">
+            <span class="status-dot" id="alarmStatusDot"></span>
+            <span id="alarmStatusText">Alarm Disabled</span>
+          </div>
+          <button class="popover-action-btn" id="testSoundBtn">
+            <svg class="btn-svg-icon" id="testSoundIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <span id="testSoundBtnText">Test Sound</span>
+          </button>
         </div>
       </div>
 
@@ -759,8 +940,12 @@
   <!-- Fullscreen Alarm Ringing Overlay -->
   <div class="alarm-overlay" id="alarmOverlay">
     <div class="alarm-card">
-      <div class="alarm-icon-animated">🔔</div>
-      <div class="alarm-title">ALARM RINGING</div>
+      <div class="alarm-badge-icon">
+        <svg class="bell-svg-large" viewBox="0 0 24 24">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+        </svg>
+      </div>
+      <div class="alarm-subtitle">ALARM RINGING</div>
       <div class="alarm-time-display" id="alarmOverlayTime">07:00 AM</div>
       <div class="alarm-snooze-info" id="alarmSnoozeInfo">Snooze duration: 5 min</div>
       <div class="alarm-btn-group">
@@ -1005,8 +1190,12 @@
         customFileName: document.getElementById('customFileName'),
         snoozeDurationSelect: document.getElementById('snoozeDurationSelect'),
         maxSnoozesSelect: document.getElementById('maxSnoozesSelect'),
-        alarmStatusBanner: document.getElementById('alarmStatusBanner'),
+        statusBannerContainer: document.getElementById('statusBannerContainer'),
+        alarmStatusDot: document.getElementById('alarmStatusDot'),
+        alarmStatusText: document.getElementById('alarmStatusText'),
         testSoundBtn: document.getElementById('testSoundBtn'),
+        testSoundIcon: document.getElementById('testSoundIcon'),
+        testSoundBtnText: document.getElementById('testSoundBtnText'),
 
         alarmOverlay: document.getElementById('alarmOverlay'),
         alarmOverlayTime: document.getElementById('alarmOverlayTime'),
@@ -1084,21 +1273,23 @@
           const formatted = formatTimeDisplay(alarmState.time);
           elements.alarmBtnBadge.textContent = formatted;
           elements.alarmBtnBadge.classList.add('active');
+          elements.statusBannerContainer.classList.remove('off');
+          elements.alarmStatusDot.classList.add('active');
           
           if (alarmState.nextTriggerTimestamp) {
             const nextDate = new Date(alarmState.nextTriggerTimestamp);
             const nextH = String(nextDate.getHours()).padStart(2, '0');
             const nextM = String(nextDate.getMinutes()).padStart(2, '0');
-            elements.alarmStatusBanner.textContent = `⏰ Snoozed until ${formatTimeDisplay(`${nextH}:${nextM}`)}`;
+            elements.alarmStatusText.textContent = `Snoozed until ${formatTimeDisplay(`${nextH}:${nextM}`)}`;
           } else {
-            elements.alarmStatusBanner.textContent = `⏰ Set for ${formatted}`;
+            elements.alarmStatusText.textContent = `Set for ${formatted}`;
           }
-          elements.alarmStatusBanner.classList.remove('off');
         } else {
           elements.alarmBtnBadge.textContent = 'OFF';
           elements.alarmBtnBadge.classList.remove('active');
-          elements.alarmStatusBanner.textContent = 'Alarm Disabled';
-          elements.alarmStatusBanner.classList.add('off');
+          elements.statusBannerContainer.classList.add('off');
+          elements.alarmStatusDot.classList.remove('active');
+          elements.alarmStatusText.textContent = 'Alarm Disabled';
         }
       }
 
@@ -1454,20 +1645,26 @@
         updateAlarmUI();
       });
 
+      const playSvgPath = 'M8 5v14l11-7z';
+      const stopSvgPath = 'M6 6h12v12H6z';
+
       elements.testSoundBtn.addEventListener('click', () => {
         if (alarmState.isTestingSound) {
           ringtoneManager.stop();
           alarmState.isTestingSound = false;
-          elements.testSoundBtn.textContent = '▶ Test Sound';
+          elements.testSoundIcon.querySelector('path').setAttribute('d', playSvgPath);
+          elements.testSoundBtnText.textContent = 'Test Sound';
         } else {
           ringtoneManager.play(alarmState.ringtone, alarmState.customAudioUrl);
           alarmState.isTestingSound = true;
-          elements.testSoundBtn.textContent = '⏹ Stop Test';
+          elements.testSoundIcon.querySelector('path').setAttribute('d', stopSvgPath);
+          elements.testSoundBtnText.textContent = 'Stop Test';
           setTimeout(() => {
             if (alarmState.isTestingSound) {
               ringtoneManager.stop();
               alarmState.isTestingSound = false;
-              elements.testSoundBtn.textContent = '▶ Test Sound';
+              elements.testSoundIcon.querySelector('path').setAttribute('d', playSvgPath);
+              elements.testSoundBtnText.textContent = 'Test Sound';
             }
           }, 5000);
         }
