@@ -83,23 +83,24 @@
       content: '';
       position: absolute;
       top: 50%;
-      width: 10px;
-      height: 18px;
+      width: 8px;
+      height: 14px;
       background-color: var(--bg-color);
-      z-index: 20;
+      z-index: 12;
       transform: translateY(-50%);
+      pointer-events: none;
     }
 
     .flip-card::before {
       left: 0;
-      border-top-right-radius: 9px;
-      border-bottom-right-radius: 9px;
+      border-top-right-radius: 7px;
+      border-bottom-right-radius: 7px;
     }
 
     .flip-card::after {
       right: 0;
-      border-top-left-radius: 9px;
-      border-bottom-left-radius: 9px;
+      border-top-left-radius: 7px;
+      border-bottom-left-radius: 7px;
     }
 
     /* Center horizontal divider line */
@@ -112,7 +113,8 @@
       background-color: var(--card-divider);
       z-index: 15;
       transform: translateY(-50%);
-      box-shadow: 0 1px 1px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
     }
 
     /* Card Half Base */
