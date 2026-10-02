@@ -729,30 +729,24 @@
       box-shadow: 0 0 16px rgba(10, 132, 255, 0.4);
     }
 
-    /* BOLD RED PENALTY BANNER FOR WRONG ANSWERS */
+    /* BOLD RED PENALTY TEXT FOR WRONG ANSWERS (NO BOX, NO BACKGROUND, NO GLOW, NO BOUNCE) */
     .math-penalty-banner {
       color: #ff3b30;
-      font-size: 0.92rem;
-      font-weight: 900;
+      font-size: 0.85rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
-      background: rgba(255, 59, 48, 0.18);
-      border: 1.5px solid #ff3b30;
-      padding: 10px 14px;
-      border-radius: 12px;
+      letter-spacing: 1px;
+      background: none;
+      border: none;
+      padding: 4px 0;
       width: 100%;
-      box-shadow: 0 0 20px rgba(255, 59, 48, 0.4);
+      box-shadow: none;
       display: none;
-      animation: penalty-pulse 0.4s infinite alternate ease-in-out;
+      text-align: center;
     }
 
     .math-penalty-banner.active {
       display: block;
-    }
-
-    @keyframes penalty-pulse {
-      0% { transform: scale(0.98); box-shadow: 0 0 12px rgba(255, 59, 48, 0.3); }
-      100% { transform: scale(1.02); box-shadow: 0 0 24px rgba(255, 59, 48, 0.7); }
     }
 
     @keyframes shake {
